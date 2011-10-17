@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<title>JWeekly Report</title>
+		<meta name="description" content="JWeekly Reportは、組織内における週報を報告するためのサービスで、決まったフォーマットに従って報告することや、報告忘れを無くすことを目指したサービスです。">
+		<meta name="author" content="istb16">
+
+		<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+		<!--[if lt IE 9]>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<!-- Le styles -->
+		<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.3.0/bootstrap.css">
+		<link rel="stylesheet" href="/css/common.css">
+
+		<!-- Le javascript -->
+		<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+		<script src="http://twitter.github.com/bootstrap/1.3.0/bootstrap-dropdown.js"></script>
+		<script src="http://twitter.github.com/bootstrap/1.3.0/bootstrap-tabs.js"></script>
+		<script src="http://autobahn.tablesorter.com/jquery.tablesorter.min.js"></script>
+		<script src="http://twitter.github.com/bootstrap/1.3.0/bootstrap-modal.js"></script>
+		<script src="/js/common.js"></script>
+		<script>
+			$(function() {
+				$('#topbar').dropdown();
+				
+				// Navigation Active
+				navChangeActive()
+			});
+			
+			function navChangeActive()
+			{
+				var matrix = new Array(
+					new Array('Dashboard', 'navDashboard'),
+					new Array('Report', 'navReport'),
+					new Array('Organization', 'navOrganization'),
+					new Array('User', 'navUser')
+				);
+				for (i = 0; i < matrix.length; i++) {
+					if ($('#' + matrix[i][0]).size() > 0) {
+						$('#' + matrix[i][1]).addClass('active');
+					}
+				}
+			}
+		</script>
+		
+		<!-- Le fav and touch icons -->
+		<link rel="shortcut icon" href="/favicon.ico">
+	</head>
+
+	<body>
+		<div id="topbar" class="topbar">
+			<div class="fill">
+				<div class="container">
+					<a class="brand" href="/">JWeekly Report</a>
+					{% if isLogin %}
+					<ul class="nav">
+						<li id="navDashboard"><a href="/Dashboard">Dashboard</a></li>
+						<li id="navReport"><a href="/Report">Report</a></li>
+						<li id="navOrganization"><a href="/Organization">Organization</a></li>
+						{% if isAdmin %}<li id="navUser"><a href="/User">User</a></li>{% endif %}
+					</ul>
+					<ul class="nav secondary-nav">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle">{{userNickname|escape}}</a>
+							<ul class="dropdown-menu">
+								<li><a href="{{urlLogout}}">Logout</a></li>
+							</ul>
+						</li>
+					</ul>
+					{% else %}
+					<ul class="nav secondary-nav">
+						<li><a href="{{urlLogin}}">Login</a></li>
+					</ul>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<header><h1>{% block title %}{% endblock %}</h1></heade>
+			
+			<div class="content">
+				{% if alertSuccess %}
+				<div class="alert-message block-message success">
+					<a class="close" href="#" onclick="$('.alert-message.success').hide(); return false;">×</a>
+					{% for alert in alertSuccess %}
+					<p><strong>{{alert.title|escape}}</strong> {{alert.message|escape}}</p>
+					{% endfor %}
+				</div>
+				{% endif %}
+				{% if alertError %}
+				<div class="alert-message block-message error">
+					<a class="close" href="#" onclick="$('.alert-message.error').hide(); return false;">×</a>
+					{% for alert in alertError %}
+					<p><strong>{{alert.title|escape}}</strong> {{alert.message|escape}}</p>
+					{% endfor %}
+				</div>
+				{% endif %}
+
+				{% block content %}
+				{% endblock %}
+			</div>
+			
+			<footer>
+				<p>&copy; istb16 2011</p>
+			</footer>
+			
+		</div>
+	</body>
+</html>

@@ -1,0 +1,202 @@
+{% extends "../layout/default.html" %}
+
+{% block title %}Organization Add{% endblock %}
+
+{% block content %}
+<section id="Organization">
+	<form method="post" action="/Organization/add">
+		<div class="row">
+			<div class="span12">
+				<fieldset>
+					<div class="clearfix">
+						<label for="name">Name</label>
+						<div class="input">
+							<input id="name" name="name" type="text" class="xxlarge" value="{{orgName}}" required/>
+						</div>
+					</div>
+					
+					<div class="clearfix">
+						<label for="reportTemplate">Report Template</label>
+						<div class="input">
+							<textarea id="reportTemplate" name="reportTemplate" class="xxlarge content" required>{{orgReportTemplate|escape}}</textarea>
+						</div>
+					</div>
+					
+					<div class="clearfix">
+						<label>Administrators</label>
+						<div class="input">
+							{% for user in orgAdminers %}
+							<div class="tagLabel alert-message info">
+								<p>{{user|escape}}</p>
+							</div>
+							{% endfor %}
+							<div style="clear:both;"></div>
+						</div>
+					</div>
+					
+					<div id="reporterWaitings" class="clearfix">
+						<label>Reporter Waitings</label>
+						<div class="input">
+							{% for email in orgReporterWaitings %}
+							<div class="tagLabel alert-message info">
+								<a class="close" href="#" onclick="hideEmail($(this).parent()); return false;">×</a>
+								<p>{{email|escape}}</p>
+								<input type="hidden" value="{{email}}" name="reporterWaitings"/>
+							</div>
+							{% endfor %}
+							<a href="#" class="btn" style="margin-left:5px;" data-controls-modal="dlgReporterEmail">Add</a>
+							<div style="clear:both;"></div>
+							
+							<div id="dlgReporterEmail" class="modal hide fade">
+								<div class="modal-header">
+									<a href="#" class="close">×</a>
+									<h3>Add reporter email address</h3>
+								</div>
+								<div class="modal-body">
+									<p><input type="text" id="reporterEmail" placeholder="email@sample.com"/></p>
+								</div>
+								<div class="modal-footer">
+									<a href="#" class="btn primary" onclick="addReporter(); return false;">Add Waiting</a>
+								</div>
+							</div>
+						</div>
+					</div>
+						
+					<div id="receiverWaitings" class="clearfix">
+						<label>Receiver Waitings</label>
+						<div class="input">
+							{% for email in orgReceiverWaitings %}
+							<div class="tagLabel alert-message info">
+								<a class="close" href="#" onclick="hideEmail($(this).parent()); return false;">×</a>
+								<p>{{email|escape}}</p>
+								<input type="hidden" value="{{email}}" name="receiverWaitings"/>
+							</div>
+							{% endfor %}
+							<a href="#" class="btn" style="margin-left:5px;" data-controls-modal="dlgReceiverEmail">Add</a>
+							<div style="clear:both;"></div>
+							
+							<div id="dlgReceiverEmail" class="modal hide fade">
+								<div class="modal-header">
+									<a href="#" class="close">×</a>
+									<h3>Add receiver email address</h3>
+								</div>
+								<div class="modal-body">
+									<p><input type="text" id="receiverEmail" placeholder="email@sample.com"/></p>
+								</div>
+								<div class="modal-footer">
+									<a href="#" class="btn primary" onclick="addReceiver(); return false;">Add Waiting</a>
+								</div>
+							</div>
+						</div>
+					</div>
+						
+					<div id="adminerWaitings" class="clearfix">
+						<label>Adminstrator Waitings</label>
+						<div class="input">
+							{% for email in orgAdminerWaitings %}
+							<div class="tagLabel alert-message info">
+								<a class="close" href="#" onclick="hideEmail($(this).parent()); return false;">×</a>
+								<p>{{email|escape}}</p>
+								<input type="hidden" value="{{email}}" name="adminerWaitings"/>
+							</div>
+							{% endfor %}
+							<a href="#" class="btn" style="margin-left:5px;" data-controls-modal="dlgAdminerEmail">Add</a>
+							<div style="clear:both;"></div>
+							
+							<div id="dlgAdminerEmail" class="modal hide fade">
+								<div class="modal-header">
+									<a href="#" class="close">×</a>
+									<h3>Add administrator email address</h3>
+								</div>
+								<div class="modal-body">
+									<p><input type="text" id="adminerEmail" placeholder="email@sample.com"/></p>
+								</div>
+								<div class="modal-footer">
+									<a href="#" class="btn primary" onclick="addAdminer(); return false;">Add Waiting</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="span4">
+				<input type="submit" class="btn primary btnFill" value="Save" />
+				<a href="/Organization" class="btn btnFill" onclick="return confirm('Really want to Cancel?');">Cancel</a>
+			</div>
+		</div>
+	</form>
+	
+	<script>
+		$(function() {
+			$('#dlgReporterEmail, #dlgReceiverEmail, #dlgAdminerEmail').modal({
+				keyboard: true,
+				backdrop: true,
+			});
+		});
+		
+		function hideUser(ctl)
+		{
+			ctl.fadeOut(200);
+			hdnUserKey = $('input[type=hidden]', ctl);
+			hdnUserKey.attr('name', hdnUserKey.attr('name') + 'Disabled');
+		}
+		
+		function hideEmail(ctl)
+		{
+			ctl.remove();
+		}
+		
+		function addReporter()
+		{
+			email = $('#reporterEmail').val();
+			group = $('#reporterWaitings');
+			
+			if (addEmail(email, group)) {
+				$('#dlgReporterEmail').modal('hide');
+			}
+		}
+		
+		function addReceiver()
+		{
+			email = $('#receiverEmail').val();
+			group = $('#receiverWaitings');
+			
+			if (addEmail(email, group)) {
+				$('#dlgReceiverEmail').modal('hide');
+			}
+		}
+		
+		function addAdminer()
+		{
+			email = $('#adminerEmail').val();
+			group = $('#adminerWaitings');
+			
+			if (addEmail(email, group)) {
+				$('#dlgAdminerEmail').modal('hide');
+			}
+		}
+		
+		function addEmail(email, group)
+		{
+			if (!email) return false;
+			
+			tagLabel = '<div class="tagLabel alert-message info">';
+			tagLabel += '<a class="close" href="#" onclick="hideEmail($(this).parent()); return false;">×</a>';
+			tagLabel += '<p>' + escapeHTML(email) + '</p>';
+			tagLabel += '<input type="hidden" value="' + email + '" name="' + group.attr('id') + '" />';
+			tagLabel += '</div>\n';
+			
+			lastTagLabel = $('div.tagLabel:last', group);
+			if (lastTagLabel.size() != 0) {
+				lastTagLabel.after(tagLabel);
+			}
+			else {
+				input = $('div.input', group);
+				input.prepend(tagLabel);
+			}
+			
+			return true;
+		}
+	</script>
+</section>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "../layout/default.html" %}
+
+{% block title %}User List{% endblock %}
+
+{% block content %}
+<section id="User">
+	<div id="users">
+		<table class="listTable zebra-striped">
+			<caption align="bottom">
+				<div class="pagination" style="padding-top: 2px;">
+					<ul>
+						<li class="prev disabled"><a href="#" onclick="return false;">&larr; Previous</a></li>
+						<li class="active"><a href="#" onclick="return false;">&nbsp;</a></li>
+						<li class="next disabled"><a href="#" onclick="return false;">Next &rarr;</a></li>
+					</ul>
+				</div>
+			</caption>
+			<thead>
+				<tr>
+					<th class="userName">Name</th>
+					<th class="userEmail">E-mail</th>
+					<th class="action">&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	
+	<script>
+		$(function() {
+			$('#users').each(function() {
+				updateUsers($(this), 0);
+			});
+		});
+		
+		function updateUsers(ctl, page) {
+			$.getJSON('/Service/GetUsers/' + page, function(data) {
+				if (data && (data.users.length > 0)) {
+					var text = '';
+					for (idx in data.users) {
+						d = data.users[idx];
+						text += '<tr>';
+						text += '<td class="userName">' + escapeHTML(d.userName) + '</td>';
+						text += '<td class="userEmail">' + escapeHTML(d.userEmail) + '</td>';
+						text += '<td class="action">';
+						if (d.userUniqueID == '{{userUniqueID}}') {
+							text += '<a href="/User/delete/' + d.key + '" class="btn danger disabled" onclick="return false;">Delete</a>';
+						}
+						else {
+							text += '<a href="/User/delete/' + d.key + '" class="btn danger" onclick="return confirm(\'Really want to Delete?\');">Delete</a>';
+						}
+						text += '</td>';
+						text += '</tr>';
+					}
+					
+					$('tbody', ctl).html(text);
+					
+					prev = $('.pagination .prev a', ctl);
+					prev.attr({onclick:'updateUsers($(this).parent().parent().parent().parent().parent().parent(), ' + (page - 1) + '); return false;'});
+					prev.parent().removeClass('disabled');
+					active = $('.pagination .active a', ctl);
+					active.text(page + 1);
+					next = $('.pagination .next a', ctl);
+					next.attr({onclick:'updateUsers($(this).parent().parent().parent().parent().parent().parent(), ' + (page + 1) + '); return false;'});
+					next.parent().removeClass('disabled');
+				}
+			});
+		}
+	</script>
+</section>
+{% endblock %}

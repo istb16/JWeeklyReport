@@ -1,0 +1,101 @@
+{% extends "../layout/default.html" %}
+
+{% block title %}Report Add{% endblock %}
+
+{% block content %}
+<section id="Report">
+	<form method="post" action="/Report/add">
+		<div class="row">
+			<div class="span12">
+				<fieldset>
+					<div class="clearfix">
+		      	<label for="year">Period</label>
+		      	<div class="input">
+		      		<select name="year" id="year" class="year">
+		      		{% for y in rangeYear %}
+		      			<option value="{{y}}"{% ifequal y rptYear %} selected{% endifequal %}>{{y|escape}}</option>
+		      		{% endfor %}
+		      		</select>
+							<select name="weekNum" id="weekNum" class="weekNum">
+							{% for w in rangeWeekNum %}
+								<option value="{{w}}"{% ifequal w rptWeekNum %} selected{% endifequal %}>{{w|escape}}</option>
+							{% endfor %}
+							</select>
+							<span id="periodDisplay" class="help-block">&nbsp;</span>
+						</div>
+					</div>
+					
+					<div class="clearfix">
+						<label for="content">Content</label>
+						<div class="input">
+							<textarea id="content" name="content" class="xxlarge content" required></textarea>
+		      		{% for org in orgs %}
+		      			<input type="hidden" id="rt_{{org.key}}" value="{{org.reportTemplate}}" />
+		      		{% endfor %}
+						</div>
+					</div>
+					
+					<div class="clearfix">
+		      	<label for="organization">Organization</label>
+		      	<div class="input">
+		      		<select name="organization" id="organization" required>
+		      		{% for org in orgs %}
+		      			<option value="{{org.key}}"{% ifequal org.key orgKey %} selected{% endifequal %}>{{org.name|escape}}</option>
+		      		{% endfor %}
+		      		</select>
+						</div>
+					</div>
+					
+					<div class="clearfix">
+						<label>Reporter</label>
+						<div class="input">
+							<span class="uneditable-input input-xxlarge">{{userNickname|escape}}</span>
+							<input id="reporter" name="reporter" type="hidden" value="{{userNickname}}" />
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="span4">
+				<input type="submit" class="btn primary btnFill" value="Save" />
+				<a href="/Report" class="btn btnFill" onclick="return confirm('Really want to Cancel?');">Cancel</a>
+			</div>
+		</div>
+	</form>
+	
+	<script>
+		$(function() {
+			displayPeriod();
+			$('#year').change(displayPeriod);
+			$('#weekNum').change(displayPeriod);
+			
+			changeReportTemplate();
+			$('#organization').change(changeReportTemplate);
+		});
+		
+		function displayPeriod()
+		{
+			year = $('#year').val();
+			weekNum = $('#weekNum').val();
+			$.getJSON('/Service/YW2Period/' + year + '/' + weekNum, function(data) {
+				if (data) {
+					s = new Date(data.start);
+					e = new Date(data.end);
+					$('#periodDisplay').html(displayDateFormat(s) + ' - ' + displayDateFormat(e));
+				}
+			});
+		}
+		
+		function changeReportTemplate()
+		{
+			orgKey = $('#organization').val();
+			reportTemplate = $('#rt_' + orgKey)
+			if (reportTemplate) {
+				if (($('#content').val().length <= 0) || confirm('Are you sure you want to reset content?')) {
+					$('#content').val(reportTemplate.val());
+				}
+			}
+		}
+
+	</script>
+</section>
+{% endblock %}

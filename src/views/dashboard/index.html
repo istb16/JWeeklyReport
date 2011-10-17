@@ -1,0 +1,77 @@
+{% extends "../layout/default.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section id="Dashboard">
+	<p class="row right">
+		<a href="/Report/add/" class="btn">Report Add</a>
+	</p>
+	<div class="row">
+		<div class="span-one-third">
+			<h2>Limit Over Organization</h2>
+			<ul class="unstyled">
+			{% for org in overReportOrganization %}
+				<li>
+					<a href="/Organization/{{org.orgKey}}">{{org.orgName|escape}}</a>
+					<span class="label warning">Warning</span>
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+		
+		<div class="span-one-third">
+			<h2>Receive Report</h2>
+			<ul class="unstyled">
+			{% for rpt in receiveReports %}
+				<li><a href="/Report/{{rpt.rptKey}}">{{rpt.rptWeekStart|date:"Y/m/d"}} - {{rpt.rptWeekEnd|date:"Y/m/d"}} ({{rpt.orgName|escape}})</a><br/>{{rpt.rptContent|truncatejp:20|escape}}</li>
+			{% endfor %}
+			</ul>
+		</div>
+		
+		<div class="span-one-third">
+			<h2>Write Report</h2>
+			<ul class="unstyled">
+			{% for rpt in updatedReports %}
+				<li><a href="/Report/{{rpt.rptKey}}">{{rpt.rptWeekStart|date:"Y/m/d"}} - {{rpt.rptWeekEnd|date:"Y/m/d"}} ({{rpt.orgName|escape}})</a><br/>{{rpt.rptContent|truncatejp:20|escape}}</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="span-one-third">
+			<h2>Report Organization</h2>
+			<ul class="unstyled">
+			{% for org in reportOrganizations %}
+				<li><a href="/Organization/{{org.orgKey}}">{{org.orgName|escape}}</a></li>
+			{% endfor %}
+			</ul>
+		</div>
+		
+		<div class="span-one-third">
+			<h2>Receive Organization</h2>
+			<ul class="unstyled">
+			{% for org in receiveOrganizations %}
+				<li><a href="/Organization/{{org.orgKey}}">{{org.orgName|escape}}</a></li>
+			{% endfor %}
+			</ul>
+		</div>
+		
+		<div class="span-one-third">
+			<h2>Admin Organization</h2>
+			<ul class="unstyled">
+			{% for org in adminOrganizations %}
+				<li><a href="/Organization/{{org.orgKey}}">{{org.orgName|escape}}</a></li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+	
+	{% if isAdmin or isHaveAdminOrganization %}
+	<p class="row right">
+		<a href="/Organization/add" class="btn">Organization Add</a>
+	</p>
+	{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends "../layout/default.html" %}
+
+{% block title %}Report List{% endblock %}
+
+{% block content %}
+<section id="Report">
+	<p class="row right">
+		<a href="/Report/add/" class="btn">Report Add</a>
+	</p>
+	
+	<ul class="tabs">
+		<li class="active"><a href="#writeReport">Write Report</a></li>
+		{% for org in receiveOrganizations %}
+		<li><a href="#ro_{{org.key}}">Receive Report: {{org.name|escape}}</a>
+		{% endfor %}
+	</ul>
+	
+	<div class="pill-content">
+		<div id="writeReport" class="active">
+			<table class="listTable zebra-striped">
+				<caption align="bottom">
+					<div class="pagination" style="padding-top: 2px; display:none;">
+						<ul>
+							<li class="prev disabled"><a href="#" onclick="return false;">&larr; Previous</a></li>
+							<li class="active"><a href="#" onclick="return false;">&nbsp;</a></li>
+							<li class="next disabled"><a href="#" onclick="return false;">Next &rarr;</a></li>
+						</ul>
+					</div>
+				</caption>
+				<thead>
+					<tr>
+						<th class="period">Period</th>
+						<th class="orgName">Organization</th>
+						<th>Content</th>
+						<th class="action">&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	
+		{% for org in receiveOrganizations %}
+		<div id="ro_{{org.key}}">
+			<input name="key" type="hidden" value="{{org.key}}" />
+			<table class="listTable zebra-striped">
+				<caption align="bottom">
+					<div class="pagination" style="padding-top: 2px; display:none;">
+						<ul>
+							<li class="prev disabled"><a href="#" onclick="return false;">&larr; Previous</a></li>
+							<li class="active"><a href="#" onclick="return false;">&nbsp;</a></li>
+							<li class="next disabled"><a href="#" onclick="return false;">Next &rarr;</a></li>
+						</ul>
+					</div>
+				</caption>
+				<thead>
+					<tr>
+						<th class="period">Period</th>
+						<th class="orgName">Organization</th>
+						<th class="userName">Name</th>
+						<th>Content</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		{% endfor %}
+	</div>
+	
+	<script>
+		$(function() {
+			$('.tabs').tabs();
+			
+			$('#writeReport').each(function() {
+				updateWriteReports($(this), 0);
+			});
+			{% for org in receiveOrganizations %}
+			$('#ro_{{org.key}}').each(function() {
+				updateReceiveReports($(this), 0);
+			});
+			{% endfor %}
+		});
+		
+		function updateWriteReports(ctl, page) {
+			prev = $('.pagination .prev a', ctl);
+			active = $('.pagination .active a', ctl);
+			next = $('.pagination .next a', ctl);
+			
+			prev.parent().addClass('disabled');
+			active.parent().addClass('disabled');
+			next.parent().addClass('disabled');
+			
+			$.getJSON('/Service/GetReports/' + page + '/', function(data) {
+				prev = $('.pagination .prev a', ctl);
+				active = $('.pagination .active a', ctl);
+				next = $('.pagination .next a', ctl);
+				
+				if (data && (data.reports.length > 0)) {
+					var text = '';
+					for (idx in data.reports) {
+						d = data.reports[idx];
+						text += '<tr>';
+						s = new Date(d.periodStart);
+						e = new Date(d.periodEnd);
+						text += '<td class="period"><a href="/Report/' + d.key + '">' + displayDateFormat(s) + ' - ' + displayDateFormat(e) + '</a></td>';
+						text += '<td class="orgName">' + escapeHTML(d.orgName) + '</td>';
+						text += '<td class="content">' + escapeHTML(d.content) + '</td>';
+						text += '<td class="action">';
+						text += '<a href="/Report/edit/' + d.key + '" class="btn">Edit</a>\n';
+						text += '<a href="/Report/delete/' + d.key + '" class="btn danger" onclick="return confirm(\'Really want to Delete?\');">Delete</a>';
+						text += '</td>';
+						text += '</tr>';
+					}
+					
+					$('tbody', ctl).html(text);
+					prev.attr({onclick:'updateWriteReports($("#writeReport"), ' + (page - 1) + '); return false;'});
+					active.text(page + 1);
+					next.attr({onclick:'updateWriteReports($("#writeReport"), ' + (page + 1) + '); return false;'});
+					
+					$('.pagination', ctl).show();
+				}
+				
+				prev.parent().removeClass('disabled');
+				active.parent().removeClass('disabled');
+				next.parent().removeClass('disabled');
+			});
+		}
+		
+		function updateReceiveReports(ctl, page) {
+			prev = $('.pagination .prev a', ctl);
+			active = $('.pagination .active a', ctl);
+			next = $('.pagination .next a', ctl);
+			
+			prev.parent().addClass('disabled');
+			active.parent().addClass('disabled');
+			next.parent().addClass('disabled');
+			$.getJSON('/Service/GetReports/' + page + '/' + $(ctl).children('input[name=key]').val(), function(data) {
+				prev = $('.pagination .prev a', ctl);
+				active = $('.pagination .active a', ctl);
+				next = $('.pagination .next a', ctl);
+				
+				if (data && (data.reports.length > 0)) {
+					var text = '';
+					for (idx in data.reports) {
+						d = data.reports[idx];
+						text += '<tr>';
+						s = new Date(d.periodStart);
+						e = new Date(d.periodEnd);
+						text += '<td class="period"><a href="/Report/' + d.key + '">' + displayDateFormat(s) + ' - ' + displayDateFormat(e) + '</a></td>';
+						text += '<td class="orgName">' + escapeHTML(d.orgName) + '</td>';
+						text += '<td class="userName">' + escapeHTML(d.userName) + '</td>';
+						text += '<td class="content">' + escapeHTML(d.content) + '</td>';
+						text += '</tr>';
+					}
+					$('tbody', ctl).html(text);
+					
+					id = ctl.attr('id');
+					prev.attr({onclick:'updateReceiveReports($("#' + id + '"), ' + (page - 1) + '); return false;'});
+					active.text(page + 1);
+					next.attr({onclick:'updateReceiveReports($("#' + id + '"), ' + (page + 1) + '); return false;'});
+					
+					$('.pagination', ctl).show();
+				}
+				prev.parent().removeClass('disabled');
+				active.parent().removeClass('disabled');
+				next.parent().removeClass('disabled');
+			});
+		}
+	</script>
+</section>
+{% endblock %}

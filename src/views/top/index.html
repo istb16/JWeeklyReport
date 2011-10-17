@@ -1,0 +1,23 @@
+{% extends "../layout/default.html" %}
+
+{% block content %}
+<section id="Top">
+	<div class="row" style="padding-top:60px;padding-bottom:60px;">
+		<div class="span7 offset1">
+			<p>
+				JWeekly Reportは、組織内における週報を報告するためのサービスです。
+				決まったフォーマットに従って報告することや、報告忘れを無くすことを目指したサービスです。</p>
+			<br/>
+			<p>
+				<span class="label notice">Notice</span>
+				このサービスでは、管理する組織が無い場合は、組織の追加等が行えません。
+				そのため、このサービスを初めに使う前に、すでにいずれかの組織で管理者権限を持っている方に、許可してもらう必要があります。
+		</div>
+		<div class="well span4 offset1">
+			<p>ログインはGoogleアカウントを利用してください。</p>
+			<p class="center"><a href="{{urlLogin}}" class="btn">Login</a></p>
+			<p class="center"><a href="https://jweeklyreport.appspot.com">SSL(https)はこちら</a></p>
+		</div>
+	</div>
+</section>
+{% endblock %}

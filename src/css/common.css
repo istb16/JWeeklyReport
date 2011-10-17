@@ -1,0 +1,71 @@
+body {
+	padding-top: 60px;
+}
+
+footer {
+	text-align: center;
+}
+
+.btnFill {
+	display: block;
+	text-align: center;
+	margin-bottom: 9px;
+}
+input.btnFill {
+	width: 100%;
+}
+
+select.year {
+	width: 75px;
+}
+
+select.weekNum {
+	width: 55px;
+}
+
+textarea.content {
+	height: 200px;
+}
+
+.center {
+	text-align: center;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.right {
+	text-align: right;
+}
+
+.listTable .period {
+	text-align: right;
+	width: 75px;
+}
+
+.listTable .orgName {
+	width: 180px;
+}
+
+.listTable .userName {
+	width: 130px;
+}
+
+.listTable .action {
+	width: 130px;
+	text-align: center;
+}
+
+.tagLabel.alert-message {
+	padding: 4px 9px;
+	margin-bottom: 3px;
+	margin-left: 5px;
+	float: left;
+}
+
+.tagLabel.alert-message .close{
+	line-height: 1;
+}
+
+.tagLabel.alert-message p{
+	padding-right: 1.5em;
+}

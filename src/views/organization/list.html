@@ -1,0 +1,116 @@
+{% extends "../layout/default.html" %}
+
+{% block title %}Organization List{% endblock %}
+
+{% block content %}
+<section id="Organization">
+	<ul class="tabs">
+		<li class="active"><a href="#report">Report Organization</a></li>
+		<li><a href="#receive">Receive Organization</a></li>
+		<li><a href="#admin">Administrator Organization</a></li>
+	</ul>
+	
+	<div class="pill-content">
+		<div id="report" class="active">
+			<table class="listTable zebra-striped">
+				<thead>
+					<tr>
+						<th class="orgName">Name</th>
+						<th>Reporters</th>
+						<th>Receivers</th>
+						<th>Administrators</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for org in reportOrganizations %}
+					<tr>
+						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name|escape}}</a></td>
+						<td>{{org.reporters|join:", "|escape}}</td>
+						<td>{{org.receivers|join:", "|escape}}</td>
+						<td>{{org.adminers|join:", "|escape}}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		
+		<div id="receive">
+			<table class="listTable zebra-striped">
+				<thead>
+					<tr>
+						<th class="orgName">Name</th>
+						<th>Reporters</th>
+						<th>Receivers</th>
+						<th>Administrators</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for org in receiveOrganizations %}
+					<tr>
+						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name|escape}}</a></td>
+						<td>{{org.reporters|join:", "|escape}}</td>
+						<td>{{org.receivers|join:", "|escape}}</td>
+						<td>{{org.adminers|join:", "|escape}}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		
+		<div id="admin">
+			<table class="listTable zebra-striped">
+				<thead>
+					<tr>
+						<th class="orgName">Name</th>
+						<th>Reporters</th>
+						<th>Receivers</th>
+						<th>Administrators</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for org in adminOrganizations %}
+					<tr>
+						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name|escape}}</a></td>
+						<td>{{org.reporters|join:", "|escape}}</td>
+						<td>{{org.receivers|join:", "|escape}}</td>
+						<td>{{org.adminers|join:", "|escape}}</td>
+						<td class="action">
+							<a href="/Organization/edit/{{org.key}}" class="btn">Edit</a>
+							<a href="/Organization/delete/{{org.key}}" class="btn danger" onclick="return confirm('Really want to Delete?');">Delete</a>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<p class="row right">
+		<a href="/Organization/add" class="btn">Organization Add</a>
+	</p>
+	
+	<script>
+		$(function() {
+			$('.tabs').tabs();
+			
+			$("table.listTable").tablesorter({
+				headers: {
+					1: {
+						sorter: false
+					},
+					2: {
+						sorter: false
+					},
+					3: {
+						sorter: false
+					},
+					4: {
+						sorter: false
+					}
+				}
+			});
+		});
+	</script>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "../layout/default.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+	<div class="alert-message block-message error">
+		<p>{{errorMessage|escape}}</p>
+	</div>
+{% endblock %}
