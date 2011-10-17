@@ -8,7 +8,7 @@
 
 管理者はすべての権限を所有し、報告者／閲覧者の権限に加えて、組織内メンバーの週報の登録／編集／削除と、組織の追加／編集／削除が行えます。
 
-サービス： http://WeeklyReport.appspot.com/
+サービス： http://jweeklyreport.appspot.com/
 サポート： http://www.ihpsystem.com
 
 TODO:	設定画面（メールを送るとか送らないとか）
