@@ -24,7 +24,14 @@ class Dashboard(controllers.LoginedBase):
 			# 期限切れか判定し、切れていたら追加
 			q = models.Report.all().filter('user =', user).filter('organization =', org)
 			q = q.filter('year =', lmtCal['year']).filter('weekNum =', lmtCal['weekNum'])
-			if q.count(limit=1) <= 0:
+			isLimitOver = False
+			if q.count(limit=1) <= 0: isLimitOver = True
+			else:
+				for rpt in q:
+					if not rpt.isFinish:
+						isLimitOver = True
+						break
+			if isLimitOver:
 				overReportOrganization.append({
 					'orgKey': org.key(),
 					'orgName': org.name,
@@ -82,7 +89,7 @@ class Dashboard(controllers.LoginedBase):
 				'orgName': rpt.organization.name,
 			})
 
-		self.render('views/dashboard/index.html', {
+		self.render('views/dashboard_index.html', {
 			'reportOrganizations': reportOrganizations,
 			'adminOrganizations': adminOrganizations,
 			'receiveOrganizations': receiveOrganizations,

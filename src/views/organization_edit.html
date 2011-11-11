@@ -1,24 +1,24 @@
-{% extends "../layout/default.html" %}
+{% extends "layout_default.html" %}
 
 {% block title %}Organization Edit{% endblock %}
 
 {% block content %}
 <section id="Organization">
-	<form method="post" action="/Organization/edit/{{orgKey}}">
+	<form method="post" action="/Organization/edit/{{org.key}}">
 		<div class="row">
 			<div class="span12">
 				<fieldset>
 					<div class="clearfix">
 						<label for="name">Name</label>
 						<div class="input">
-							<input id="name" name="name" type="text" class="xxlarge" value="{{orgName}}" />
+							<input id="name" name="name" type="text" class="xxlarge" value="{{org.name}}" />
 						</div>
 					</div>
 					
 					<div class="clearfix">
 						<label for="reportTemplate">Report Template</label>
 						<div class="input">
-							<textarea id="reportTemplate" name="reportTemplate" class="xxlarge content" required>{{orgReportTemplate|escape}}</textarea>
+							<textarea id="reportTemplate" name="reportTemplate" class="xxlarge content" required>{{org.reportTemplate}}</textarea>
 						</div>
 					</div>
 					
@@ -28,7 +28,7 @@
 							{% for user in orgReporters %}
 							<div class="tagLabel alert-message info">
 								<a class="close" href="#" onclick="hideUser($(this).parent()); return false;">×</a>
-								<p>{{user.name|escape}}</p>
+								<p>{{user.name}}</p>
 								<input type="hidden" value="{{user.key}}" name="reporters"/>
 							</div>
 							{% endfor %}
@@ -42,7 +42,7 @@
 							{% for user in orgReceivers %}
 							<div class="tagLabel alert-message info">
 								<a class="close" href="#" onclick="hideUser($(this).parent()); return false;">×</a>
-								<p>{{user.name|escape}}</p>
+								<p>{{user.name}}</p>
 								<input type="hidden" value="{{user.key}}" name="receivers"/>
 							</div>
 							{% endfor %}
@@ -55,8 +55,8 @@
 						<div class="input">
 							{% for user in orgAdminers %}
 							<div class="tagLabel alert-message info">
-								{% ifnotequal user.key userKey %}<a class="close" href="#" onclick="hideUser($(this).parent()); return false;">×</a>{% endifnotequal %}
-								<p>{{user.name|escape}}</p>
+								{% ifnotequal user.key loginUser.key %}<a class="close" href="#" onclick="hideUser($(this).parent()); return false;">×</a>{% endifnotequal %}
+								<p>{{user.name}}</p>
 								<input type="hidden" value="{{user.key}}" name="adminers"/>
 							</div>
 							{% endfor %}
@@ -67,10 +67,10 @@
 					<div id="reporterWaitings" class="clearfix">
 						<label>Reporter Waitings</label>
 						<div class="input">
-							{% for email in orgReporterWaitings %}
+							{% for email in org.reporterWaitings %}
 							<div class="tagLabel alert-message info">
 								<a class="close" href="#" onclick="hideEmail($(this).parent()); return false;">×</a>
-								<p>{{email|escape}}</p>
+								<p>{{email}}</p>
 								<input type="hidden" value="{{email}}" name="reporterWaitings"/>
 							</div>
 							{% endfor %}
@@ -95,10 +95,10 @@
 					<div id="receiverWaitings" class="clearfix">
 						<label>Receiver Waitings</label>
 						<div class="input">
-							{% for email in orgReceiverWaitings %}
+							{% for email in org.receiverWaitings %}
 							<div class="tagLabel alert-message info">
 								<a class="close" href="#" onclick="hideEmail($(this).parent()); return false;">×</a>
-								<p>{{email|escape}}</p>
+								<p>{{email}}</p>
 								<input type="hidden" value="{{email}}" name="receiverWaitings"/>
 							</div>
 							{% endfor %}
@@ -123,10 +123,10 @@
 					<div id="adminerWaitings" class="clearfix">
 						<label>Adminstrator Waitings</label>
 						<div class="input">
-							{% for email in orgAdminerWaitings %}
+							{% for email in org.adminerWaitings %}
 							<div class="tagLabel alert-message info">
 								<a class="close" href="#" onclick="hideEmail($(this).parent()); return false;">×</a>
-								<p>{{email|escape}}</p>
+								<p>{{email}}</p>
 								<input type="hidden" value="{{email}}" name="adminerWaitings"/>
 							</div>
 							{% endfor %}
@@ -147,11 +147,19 @@
 							</div>
 						</div>
 					</div>
+					
+					<div class="clearfix">
+						<label for="notifyEmail">Notify mail address</label>
+						<div class="input">
+							<input id="notifyEmail" name="notifyEmail" type="email" class="xxlarge" value="{{org.notifyEmail}}"/>
+						</div>
+					</div>
 				</fieldset>
 			</div>
-			<div class="span4">
+			<div class="span3 well">
 				<input type="submit" class="btn primary btnFill" value="Save" />
-				<a href="/Organization/{{orgKey}}" class="btn btnFill" onclick="return confirm('Really want to Cancel?');">Cancel</a>
+				<br/>	
+				<a href="/Organization/{{org.key}}" class="btn btnFill" onclick="return confirm('Really want to Cancel?');">Cancel</a>
 			</div>
 		</div>
 	</form>

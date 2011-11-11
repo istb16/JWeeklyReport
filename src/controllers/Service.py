@@ -55,6 +55,7 @@ class ServiceGetReports(controllers.LoginedBase):
 				'content': viewfilters.CustomString.truncatejp(rpt.content, 70),
 				'userName': rpt.user.author.nickname(),
 				'orgName': rpt.organization.name,
+				'isFinish': str(rpt.isFinish),
 			})
 
 		json = simplejson.dumps(data, ensure_ascii=False)

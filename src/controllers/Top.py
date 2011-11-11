@@ -11,4 +11,4 @@ class Top(controllers.PublicBase):
 		if user:
 			self.redirect('/Dashboard')
 		else:
-			self.render('views/top/index.html', {'urlLogin': users.create_login_url(self.request.uri)})
+			self.render('views/top_index.html', {'urlLogin': users.create_login_url(self.request.uri)})

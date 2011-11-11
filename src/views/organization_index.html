@@ -1,0 +1,47 @@
+{% extends "layout_default.html" %}
+
+{% block title %}Organization Detail{% endblock %}
+
+{% block content %}
+<section id="Organization">
+	<div class="row">
+		<dl class="span12">
+			<dt>Name</dt>
+			<dd><p>{{org.name}}&nbsp;</p></dd>
+			
+			<dt>Report Template</dt>
+			<dd>{%if org.reportTemplate %}{{org.reportTemplate|linebreaks}}{% else %}<p>&nbsp;</p>{% endif %}</dd>
+			
+			<dt>Reporters</dt>
+			<dd><p>{{orgReporters|join:", "}}&nbsp;</p></dd>
+			
+			<dt>Receivers</dt>
+			<dd><p>{{orgReceivers|join:", "}}&nbsp;</p></dd>
+			
+			<dt>Administrators</dt>
+			<dd><p>{{orgAdminers|join:", "}}&nbsp;</p></dd>
+			
+			<dt>Reporter Waitings</dt>
+			<dd><p>{{org.reporterWaitings|join:", "}}&nbsp;</p></dd>
+			
+			<dt>Receiver Waitings</dt>
+			<dd><p>{{org.receiverWaitings|join:", "}}&nbsp;</p></dd>
+			
+			<dt>Administrator Waitings</dt>
+			<dd><p>{{org.adminerWaitings|join:", "}}&nbsp;</p></dd>
+			
+			<dt>Notify email address</dt>
+			<dd><p>{{org.notifyEmail}}&nbsp;</p></dd>
+		</dl>
+			<div class="span3 well">
+			<a href="/Organization/edit/{{org.key}}" class="btn btnFill">Edit</a>
+			<a href="/Organization/delete/{{org.key}}" class="btn danger btnFill" onclick="return confirm('Really want to Delete?');">Delete</a>
+		</div>
+		{% if accessType.Reporter %}
+		<div class="span3 well">
+			<a href="/Report/add/{{org.key}}" class="btn btnFill">Report Add</a>
+		</div>
+		{% endif %}
+	</div>
+</section>
+{% endblock %}

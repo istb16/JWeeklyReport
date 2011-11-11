@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import cgi
-import os
 
+from google.appengine.dist import use_library
+use_library('django', '1.2')
 import lib.CustomWebapp as webapp
 webapp.template.register_template_library('viewfilters.CustomString')
 import controllers
@@ -20,6 +21,7 @@ application = webapp.CustomWSGIApplication([('/', controllers.Top),
 											('/Report/add', controllers.ReportAdd),
 											('/Report/add/(.*)', controllers.ReportAdd),
 											('/Report/edit/(.*)', controllers.ReportEdit),
+											('/Report/finish/(.*)', controllers.ReportFinish),
 											('/Report/delete/(.*)', controllers.ReportDelete),
 											('/Report/(.*)', controllers.Report),
 											('/Service/YW2Period/(.*)/(.*)', controllers.ServiceYW2Period),

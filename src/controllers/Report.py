@@ -19,13 +19,10 @@ class Report(controllers.LoginedBase):
 
 		week = self.getDateWithCalendar(rpt.year, rpt.weekNum)
 
-		self.render('views/report/index.html', {
-			'rptKey': rpt.key(),
+		self.render('views/report_index.html', {
+			'rpt': rpt,
 			'rptWeekStart': week['start'],
 			'rptWeekEnd': week['end'],
-			'rptContent': rpt.content,
-			'userNickname': rpt.user.author.nickname(),
-			'orgName': rpt.organization.name,
 		})
 
 class ReportAdd(Report):
@@ -51,7 +48,7 @@ class ReportAdd(Report):
 
 		cal = self.getCalendarWithDate(date.today() - timedelta(days=7))
 
-		self.render('views/report/add.html', {
+		self.render('views/report_add.html', {
 			'rptYear': cal['year'],
 			'rptWeekNum': cal['weekNum'],
 			'userNickname': user.author.nickname(),
@@ -68,18 +65,27 @@ class ReportAdd(Report):
 			return
 
 		orgKey = self.request.get('organization')
+		isFinish = (self.request.get('isFinish') == 'True')
 
 		user = self.loginUser
 		org = models.Organization.get(orgKey)
 
+		# データ保存
 		rpt = models.Report(
 			year = int(self.request.get('year')),
 			weekNum = int(self.request.get('weekNum')),
 			content = self.request.get('content'),
 			user = user,
 			organization = org,
+			isFinish = isFinish,
 		)
 		rpt.put()
+
+
+		# メール送信
+		if rpt.isFinish:
+			if len(rpt.organization.notifyEmail) > 0:
+				models.SendMail.receiveReport(rpt.organization.notifyEmail, rpt, self.getDateWithCalendar(rpt.year, rpt.weekNum))
 
 		msg = models.Message(
 			user = self.loginUser.author,
@@ -98,14 +104,12 @@ class ReportEdit(Report):
 		if not self.haveFullAccessReport(rpt):
 			self.error(403)
 			return
+		if rpt.isFinish:
+			self.error(403)
+			return
 
-		self.render('views/report/edit.html', {
-			'rptKey': rpt.key(),
-			'rptYear': rpt.year,
-			'rptWeekNum': rpt.weekNum,
-			'rptContent': rpt.content,
-			'userNickname': rpt.user.author.nickname(),
-			'orgName': rpt.organization.name,
+		self.render('views/report_edit.html', {
+			'rpt': rpt,
 			'rangeYear': controllers.Base.RangeYear,
 			'rangeWeekNum': controllers.Base.RangeWeekNum,
 		})
@@ -121,11 +125,48 @@ class ReportEdit(Report):
 		year = int(self.request.get('year'))
 		weekNum = int(self.request.get('weekNum'))
 		content = self.request.get('content')
+		isFinish = (self.request.get('isFinish') == 'True')
 
+		# データ保存
 		rpt.year = year
 		rpt.weekNum = weekNum
 		rpt.content = content
+		rpt.isFinish = isFinish
 		rpt.put()
+
+		# メール送信
+		if rpt.isFinish:
+			if len(rpt.organization.notifyEmail) > 0:
+				models.SendMail.receiveReport(rpt.organization.notifyEmail, rpt, self.getDateWithCalendar(rpt.year, rpt.weekNum))
+
+		msg = models.Message(
+			user = self.loginUser.author,
+			title = 'Well done!',
+			message = 'You have successfully saved data',
+		)
+		msg.put()
+
+		self.redirect('/Report/' + str(rpt.key()))
+
+class ReportFinish(Report):
+	def get(self, key=None):
+		rpt = models.Report.get(key);
+
+		# アクセス制限
+		if not self.haveFullAccessReport(rpt):
+			self.error(403)
+			return
+		if rpt.isFinish:
+			self.error(403)
+			return
+
+		rpt.isFinish = True
+		rpt.put()
+
+		# メール送信
+		if rpt.isFinish:
+			if len(rpt.organization.notifyEmail) > 0:
+				models.SendMail.receiveReport(rpt.organization.notifyEmail, rpt, self.getDateWithCalendar(rpt.year, rpt.weekNum))
 
 		msg = models.Message(
 			user = self.loginUser.author,
@@ -158,16 +199,14 @@ class ReportDelete(Report):
 
 class ReportList(Report):
 	def get(self):
-		user = self.loginUser
-
 		receiveOrganizations = []
-		for oKey in user.receiveOrganizations:
+		for oKey in self.loginUser.receiveOrganizations:
 			org = models.Organization.get(oKey)
 			receiveOrganizations.append({
 				'key': org.key(),
 				'name': org.name,
 			})
 
-		self.render('views/report/list.html', {
+		self.render('views/report_list.html', {
 			'receiveOrganizations': receiveOrganizations,
 		})

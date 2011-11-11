@@ -15,13 +15,11 @@ class SendMail:
 				sender = user.email(),
 				to = to,
 				subject = 'Confirmation for add Reporter in Weekly Report System',
-				body = '''
-TO: %(email)s
+				body = '''TO: %(email)s
 
 You has been required to register as a Reporter in Weekly Report System.
 The registered organization is %(orgName)s.
 You can now visit http://jweeklyreport.appspot.com/User/ConfReporter/%(orgKey)s and sign in using your Google Account to get new access permission.
-
 '''
 					% {'email': to, 'orgKey': orgKey, 'orgName': orgName})
 
@@ -36,8 +34,7 @@ You can now visit http://jweeklyreport.appspot.com/User/ConfReporter/%(orgKey)s 
 				sender = user.email(),
 				to = to,
 				subject = 'Confirmation for add Receiver in Weekly Report System',
-				body = '''
-TO: %(email)s
+				body = '''TO: %(email)s
 
 You has been required to register as a Receiver in Weekly Report System.
 The registered organization is %(orgName)s.
@@ -55,8 +52,7 @@ You can now visit http://jweeklyreport.appspot.com/User/ConfReceiver/%(orgKey)s 
 				sender = user.email(),
 				to = to,
 				subject = 'Confirmation for add Administrator in Weekly Report System',
-				body = '''
-TO: %(email)s
+				body = '''TO: %(email)s
 
 You has been required to register as a Administrator in Weekly Report System.
 The registered organization is %(orgName)s.
@@ -67,19 +63,16 @@ You can now visit http://jweeklyreport.appspot.com/User/ConfAdminer/%(orgKey)s a
 	# 受信レポート通知メール
 	#
 	@classmethod
-	def receiveReport(self, to, rptKey, orgName, periodStart, periodEnd, content):
+	def receiveReport(self, to, rpt, rptCal):
 		user = users.get_current_user()
 		if user:
+			rptCal['start'] = rptCal['start'].strftime('%Y-%m-%d')
+			rptCal['end'] = rptCal['end'].strftime('%Y/%m/%d')
 			mail.send_mail(
 				sender = user.email(),
 				to = to,
-				subject = 'Receive Weekly Report: %(userName)s %(periodStart)s - %(periodEnd)s',
-				body = '''
-%(userName)s Wrote a Weekly Report for %(orgName)s.
-This Report period is from %(periodStart)s to %(periodEnd)s.
-
-http://jweeklyreport.appspot.com/Report/%(rptKey)s
-
+				subject = 'Weekly Report: %(userName)s %(periodStart)s - %(periodEnd)s [%(orgName)s]' % {'userName': rpt.user.author.nickname(), 'periodStart': rptCal['start'], 'periodEnd':rptCal['end'], 'orgName': rpt.organization.name},
+				body = '''%(content)s
 ----------------------------------------------------------------------
-%(content)s
-''' % {'rptKey': rptKey, 'periodStart': periodStart, 'periodEnd': periodEnd, 'userName': userName, 'orgName': orgName})
+http://jweeklyreport.appspot.com/Report/%(rptKey)s
+from JWeekly Report''' % {'rptKey': rpt.key(), 'periodStart': rptCal['start'], 'periodEnd': rptCal['end'], 'content': rpt.content})

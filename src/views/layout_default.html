@@ -64,7 +64,7 @@
 					</ul>
 					<ul class="nav secondary-nav">
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle">{{userNickname|escape}}</a>
+							<a href="#" class="dropdown-toggle">{{loginUser.author.nickname}}</a>
 							<ul class="dropdown-menu">
 								<li><a href="{{urlLogout}}">Logout</a></li>
 							</ul>
@@ -87,7 +87,7 @@
 				<div class="alert-message block-message success">
 					<a class="close" href="#" onclick="$('.alert-message.success').hide(); return false;">×</a>
 					{% for alert in alertSuccess %}
-					<p><strong>{{alert.title|escape}}</strong> {{alert.message|escape}}</p>
+					<p><strong>{{alert.title}}</strong> {{alert.message}}</p>
 					{% endfor %}
 				</div>
 				{% endif %}
@@ -95,7 +95,7 @@
 				<div class="alert-message block-message error">
 					<a class="close" href="#" onclick="$('.alert-message.error').hide(); return false;">×</a>
 					{% for alert in alertError %}
-					<p><strong>{{alert.title|escape}}</strong> {{alert.message|escape}}</p>
+					<p><strong>{{alert.title}}</strong> {{alert.message}}</p>
 					{% endfor %}
 				</div>
 				{% endif %}

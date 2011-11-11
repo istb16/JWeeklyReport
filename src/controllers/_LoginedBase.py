@@ -36,8 +36,7 @@ class LoginedBase(controllers.Base):
 		tmpl = {
 			'isLogin': True,
 			'isAdmin': self.isAdminUser,
-			'userNickname': user.author.nickname(),
-			'userUniqueID': user.author.user_id(),
+			'loginUser': user,
 			'alertSuccess': [],
 		}
 

@@ -1,0 +1,31 @@
+{% extends "layout_default.html" %}
+
+{% block title %}Report Detail{% endblock %}
+
+{% block content %}
+<section id="Report">
+	<div class="row">
+		<dl class="span12">
+			<dt>Period</dt>
+			<dd><p>{{rptWeekStart|date:"Y/m/d"}} - {{rptWeekEnd|date:"Y/m/d"}}&nbsp;</p></dd>
+			
+			<dt>Organization</dt>
+			<dd><p>{{rpt.organization.name}}&nbsp;</p></dd>
+			
+			<dt>Content</dt>
+			<dd>{% if rpt.content %}{{rpt.content|linebreaks}}{% else %}<p>nbps;</p>{% endif %}</dd>
+			
+			<dt>Reporter</dt>
+			<dd><p>{{rpt.user.author.nickname}}&nbsp;</p></dd>
+		</dl>
+		<div class="span3 well">
+			{% if not rpt.isFinish %}
+			<a href="/Report/edit/{{rpt.key}}" class="btn btnFill">Edit</a>
+			<a href="/Report/finish/{{rpt.key}}" class="btn success btnFill" onclick="return confirm('Really want to Finish?');">Finish</a>
+			<br/>
+			{% endif %}
+			<a href="/Report/delete/{{rpt.key}}" class="btn danger btnFill" onclick="return confirm('Really want to Delete?');">Delete</a>
+		</div>
+	</div>
+</section>
+{% endblock %}

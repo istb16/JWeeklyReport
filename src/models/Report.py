@@ -9,3 +9,4 @@ class Report(models.Base):
 	content = db.TextProperty(required=True)
 	user = db.ReferenceProperty(models.User)
 	organization = db.ReferenceProperty(models.Organization)
+	isFinish = db.BooleanProperty(default=False)

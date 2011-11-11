@@ -14,3 +14,5 @@ class Organization(models.Base):
 	reporterWaitings = db.StringListProperty()
 	receiverWaitings = db.StringListProperty()
 	adminerWaitings = db.StringListProperty()
+
+	notifyEmail = db.StringProperty(default='')

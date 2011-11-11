@@ -95,6 +95,7 @@ class Base(webapp.CustomRequestHandler):
 			rtValue = {}
 		return rtValue
 
+
 Base.WeekNumTypeISO = 0
 Base.WeekNumTypeMon = 1
 Base.WeekNumTypeSun = 2

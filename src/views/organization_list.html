@@ -1,4 +1,4 @@
-{% extends "../layout/default.html" %}
+{% extends "layout_default.html" %}
 
 {% block title %}Organization List{% endblock %}
 
@@ -24,10 +24,10 @@
 				<tbody>
 					{% for org in reportOrganizations %}
 					<tr>
-						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name|escape}}</a></td>
-						<td>{{org.reporters|join:", "|escape}}</td>
-						<td>{{org.receivers|join:", "|escape}}</td>
-						<td>{{org.adminers|join:", "|escape}}</td>
+						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name}}</a></td>
+						<td>{{org.reporters|join:", "}}</td>
+						<td>{{org.receivers|join:", "}}</td>
+						<td>{{org.adminers|join:", "}}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -47,10 +47,10 @@
 				<tbody>
 					{% for org in receiveOrganizations %}
 					<tr>
-						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name|escape}}</a></td>
-						<td>{{org.reporters|join:", "|escape}}</td>
-						<td>{{org.receivers|join:", "|escape}}</td>
-						<td>{{org.adminers|join:", "|escape}}</td>
+						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name}}</a></td>
+						<td>{{org.reporters|join:", "}}</td>
+						<td>{{org.receivers|join:", "}}</td>
+						<td>{{org.adminers|join:", "}}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -71,10 +71,10 @@
 				<tbody>
 					{% for org in adminOrganizations %}
 					<tr>
-						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name|escape}}</a></td>
-						<td>{{org.reporters|join:", "|escape}}</td>
-						<td>{{org.receivers|join:", "|escape}}</td>
-						<td>{{org.adminers|join:", "|escape}}</td>
+						<td class="orgName"><a href="/Organization/{{org.key}}">{{org.name}}</a></td>
+						<td>{{org.reporters|join:", "}}</td>
+						<td>{{org.receivers|join:", "}}</td>
+						<td>{{org.adminers|join:", "}}</td>
 						<td class="action">
 							<a href="/Organization/edit/{{org.key}}" class="btn">Edit</a>
 							<a href="/Organization/delete/{{org.key}}" class="btn danger" onclick="return confirm('Really want to Delete?');">Delete</a>

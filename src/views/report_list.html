@@ -1,4 +1,4 @@
-{% extends "../layout/default.html" %}
+{% extends "layout_default.html" %}
 
 {% block title %}Report List{% endblock %}
 
@@ -11,7 +11,7 @@
 	<ul class="tabs">
 		<li class="active"><a href="#writeReport">Write Report</a></li>
 		{% for org in receiveOrganizations %}
-		<li><a href="#ro_{{org.key}}">Receive Report: {{org.name|escape}}</a>
+		<li><a href="#ro_{{org.key}}">Receive Report: {{org.name}}</a>
 		{% endfor %}
 	</ul>
 	
@@ -107,7 +107,9 @@
 						text += '<td class="orgName">' + escapeHTML(d.orgName) + '</td>';
 						text += '<td class="content">' + escapeHTML(d.content) + '</td>';
 						text += '<td class="action">';
-						text += '<a href="/Report/edit/' + d.key + '" class="btn">Edit</a>\n';
+						if (d.isFinish != 'True') {
+							text += '<a href="/Report/edit/' + d.key + '" class="btn">Edit</a>\n';
+						}
 						text += '<a href="/Report/delete/' + d.key + '" class="btn danger" onclick="return confirm(\'Really want to Delete?\');">Delete</a>';
 						text += '</td>';
 						text += '</tr>';

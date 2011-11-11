@@ -22,26 +22,11 @@ class Organization(controllers.LoginedBase):
 			self.error(403)
 			return
 
-		orgReporters = []
-		for userKey in org.reporters:
-			orgReporters.append(models.User.get(userKey).author.nickname())
-		orgReceivers = []
-		for userKey in org.receivers:
-			orgReceivers.append(models.User.get(userKey).author.nickname())
-		orgAdminers = []
-		for userKey in org.adminers:
-			orgAdminers.append(models.User.get(userKey).author.nickname())
-
-		self.render('views/organization/index.html', {
-			'orgKey': org.key(),
-			'orgName': org.name,
-			'orgReportTemplate': org.reportTemplate,
-			'orgReporterWaitings': org.reporterWaitings,
-			'orgReceiverWaitings': org.receiverWaitings,
-			'orgAdminerWaitings': org.adminerWaitings,
-			'orgReporters': orgReporters,
-			'orgReceivers': orgReceivers,
-			'orgAdminers': orgAdminers,
+		self.render('views/organization_index.html', {
+			'org': org,
+			'orgReporters': self.convUserNickname(org.reporters),
+			'orgReceivers': self.convUserNickname(org.receivers),
+			'orgAdminers': self.convUserNickname(org.adminers),
 			'accessType': accessType,
 		})
 
@@ -68,11 +53,11 @@ class OrganizationAdd(Organization):
 			self.error(403)
 			return
 
-		orgAdminers = []
-		orgAdminers.append(self.loginUser.author.nickname())
+		adminers = []
+		adminers.append(self.loginUser.author.nickname())
 
-		self.render('views/organization/add.html', {
-			'orgAdminers': orgAdminers,
+		self.render('views/organization_add.html', {
+			'orgAdminers':adminers,
 		})
 
 	def post(self):
@@ -86,6 +71,7 @@ class OrganizationAdd(Organization):
 		reporterWaitings = self.request.get_all('reporterWaitings')
 		receiverWaitings = self.request.get_all('receiverWaitings')
 		adminerWaitings = self.request.get_all('adminerWaitings')
+		notifyEmail = self.request.get('notifyEmail')
 
 		# データチェック
 		validErrors = []
@@ -117,6 +103,7 @@ class OrganizationAdd(Organization):
 				reporterWaitings = reporterWaitings,
 				receiverWaitings = receiverWaitings,
 				adminerWaitings = adminerWaitings,
+				notifyEmail = notifyEmail,
 			)
 			org.put()
 
@@ -158,17 +145,11 @@ class OrganizationEdit(Organization):
 			self.error(403)
 			return
 
-		self.render('views/organization/edit.html', {
-			'orgKey': org.key(),
-			'orgName': org.name,
-			'orgReportTemplate': org.reportTemplate,
-			'orgReporterWaitings': org.reporterWaitings,
-			'orgReceiverWaitings': org.receiverWaitings,
-			'orgAdminerWaitings': org.adminerWaitings,
+		self.render('views/organization_edit.html', {
+			'org': org,
 			'orgReporters': self.convUsers(org.reporters),
 			'orgReceivers': self.convUsers(org.receivers),
 			'orgAdminers': self.convUsers(org.adminers),
-			'userKey': self.loginUser.key(),
 		})
 
 	def post(self, key=None):
@@ -187,6 +168,7 @@ class OrganizationEdit(Organization):
 		reporterWaitings = self.request.get_all('reporterWaitings')
 		receiverWaitings = self.request.get_all('receiverWaitings')
 		adminerWaitings = self.request.get_all('adminerWaitings')
+		notifyEmail = self.request.get('notifyEmail')
 
 		# データチェック
 		validErrors = []
@@ -227,6 +209,7 @@ class OrganizationEdit(Organization):
 			org.reporterWaitings = reporterWaitings
 			org.receiverWaitings = receiverWaitings
 			org.adminerWaitings = adminerWaitings
+			org.notifyEmail = notifyEmail
 			for userDisabled in reportersDisabled:
 				if len(userDisabled) > 0:
 					userDisabled = models.db.Key(userDisabled)
@@ -262,7 +245,7 @@ class OrganizationEdit(Organization):
 			)
 			msg.put()
 
-			self.redirect('/Organization/edit/' + str(org.key()))
+			self.redirect('/Organization/' + str(org.key()))
 		else:
 			for error in validErrors:
 				msg = models.Message(
@@ -352,7 +335,7 @@ class OrganizationList(Organization):
 				'adminers': self.convUserNickname(org.adminers),
 			})
 
-		self.render('views/organization/list.html', {
+		self.render('views/organization_list.html', {
 			'reportOrganizations': reportOrganizations,
 			'receiveOrganizations': receiveOrganizations,
 			'adminOrganizations': adminOrganizations,

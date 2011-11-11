@@ -39,7 +39,7 @@ class UserConfReceiver(UserConf):
 		memcache.delete("loginUser")
 		org.put()
 
-		self.render('views/user/confReceiver.html', {
+		self.render('views/user_confReceiver.html', {
 			'orgKey': org.key(),
 			'orgName': org.name,
 		})
@@ -73,7 +73,7 @@ class UserConfAdminer(UserConf):
 		memcache.delete("loginUser")
 		org.put()
 
-		self.render('views/user/confAdminer.html', {
+		self.render('views/user_confAdminer.html', {
 			'orgKey': org.key(),
 			'orgName': org.name,
 		})
@@ -107,7 +107,7 @@ class UserConfReporter(UserConf):
 		memcache.delete("loginUser")
 		org.put()
 
-		self.render('views/user/confReporter.html', {
+		self.render('views/user_confReporter.html', {
 			'orgKey': org.key(),
 			'orgName': org.name,
 		})
@@ -157,5 +157,5 @@ class UserList(User):
 			self.error(403)
 			return
 
-		self.render('views/user/list.html', {
+		self.render('views/user_list.html', {
 		})

@@ -1,10 +1,11 @@
-{% extends "../layout/default.html" %}
+{% extends "layout_default.html" %}
 
 {% block title %}Report Edit{% endblock %}
 
 {% block content %}
 <section id="Report">
-	<form method="post" action="/Report/edit/{{rptKey}}">
+	<form method="post" action="/Report/edit/{{rpt.key}}">
+		<input id="isFinish" name="isFinish" type="hidden" value="{{rpt.isFinish}}" />
 		<div class="row">
 			<div class="span12">
 				<fieldset>
@@ -13,12 +14,12 @@
 		      	<div class="input">
 		      		<select name="year" id="year" class="year">
 		      		{% for y in rangeYear %}
-		      			<option value="{{y}}"{% ifequal y rptYear %} selected{% endifequal %}>{{y|escape}}</option>
+		      			<option value="{{y}}"{% ifequal y rpt.year %} selected{% endifequal %}>{{y}}</option>
 		      		{% endfor %}
 		      		</select>
 							<select name="weekNum" id="weekNum" class="weekNum">
 							{% for w in rangeWeekNum %}
-								<option value="{{w}}"{% ifequal w rptWeekNum %} selected{% endifequal %}>{{w|escape}}</option>
+								<option value="{{w}}"{% ifequal w rpt.weekNum %} selected{% endifequal %}>{{w}}</option>
 							{% endfor %}
 							</select>
 							<span id="periodDisplay" class="help-block">&nbsp;</span>
@@ -26,32 +27,34 @@
 					</div>
 					
 					<div class="clearfix">
-						<label for="content">Content</label>
+						<label>Organization</label>
 						<div class="input">
-							<textarea id="content" name="content" class="xxlarge content" required>{{rptContent|escape}}</textarea>
+							<span class="uneditable-input input-xxlarge">{{rpt.organization.name}}</span>
+							<input id="organization" name="organization" type="hidden" value="{{rpt.organization.name}}" />
 						</div>
 					</div>
 					
 					<div class="clearfix">
-						<label>Organization</label>
+						<label for="content">Content</label>
 						<div class="input">
-							<span class="uneditable-input input-xxlarge">{{orgName|escape}}</span>
-							<input id="organization" name="organization" type="hidden" value="{{orgName}}" />
+							<textarea id="content" name="content" class="xxlarge content" required>{{rpt.content}}</textarea>
 						</div>
 					</div>
 					
 					<div class="clearfix">
 						<label>Reporter</label>
 						<div class="input">
-							<span class="uneditable-input input-xxlarge">{{userNickname|escape}}</span>
-							<input id="reporter" name="reporter" type="hidden" value="{{userNickname}}" />
+							<span class="uneditable-input input-xxlarge">{{rpt.user.author.nickname}}</span>
+							<input id="reporter" name="reporter" type="hidden" value="{{rpt.user.author.nickname}}" />
 						</div>
 					</div>
 				</fieldset>
 			</div>
-			<div class="span4">
+			<div class="span3 well">
 				<input type="submit" class="btn primary btnFill" value="Save" />
-				<a href="/Report/{{rptKey}}" class="btn btnFill" onclick="return confirm('Really want to Cancel?');">Cancel</a>
+				<input type="button" class="btn success btnFill" value="Save and Finish" onclick="if (confirm('Really want to Finish?')) { $('#isFinish').val('True'); $('form').submit(); } return false;" />
+				<br/>
+				<a href="/Report/{{rpt.key}}" class="btn btnFill" onclick="return confirm('Really want to Cancel?');">Cancel</a>
 			</div>
 		</div>
 	</form>

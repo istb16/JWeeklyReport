@@ -1,4 +1,4 @@
-{% extends "../layout/default.html" %}
+{% extends "layout_default.html" %}
 
 {% block title %}User List{% endblock %}
 
@@ -44,7 +44,7 @@
 						text += '<td class="userName">' + escapeHTML(d.userName) + '</td>';
 						text += '<td class="userEmail">' + escapeHTML(d.userEmail) + '</td>';
 						text += '<td class="action">';
-						if (d.userUniqueID == '{{userUniqueID}}') {
+						if (d.userUniqueID == '{{loginUser.author.user_id|safe}}') {
 							text += '<a href="/User/delete/' + d.key + '" class="btn danger disabled" onclick="return false;">Delete</a>';
 						}
 						else {
